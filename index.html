@@ -6,7 +6,6 @@
   <title>Dustorb — Rocket League</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    * { -webkit-user-select:none; -moz-user-select:none; user-select:none; }
 
     :root {
       --bg:      #1a1a1a;
@@ -19,6 +18,14 @@
       --accent:  #7a9cbf;
     }
 
+    /* no text selection anywhere */
+    * {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
     body {
       background: var(--bg);
       color: var(--text);
@@ -26,135 +33,230 @@
       min-height: 100vh;
     }
 
+    /* ── HERO ────────────────────────────────── */
     .hero {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       padding: 3rem 1.5rem 2.5rem;
       text-align: center;
     }
+
     .psn-label {
-      font-size: 0.6rem; letter-spacing: 0.32em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 0.75rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
     }
+
     .player-name {
       font-size: clamp(2.6rem, 9vw, 4.8rem);
-      font-weight: 300; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--text); line-height: 1;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text);
+      line-height: 1;
     }
+
     .tagline {
-      margin-top: 0.85rem; font-size: 0.68rem;
-      letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+      margin-top: 0.85rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
     }
 
-    .wrap { max-width: 640px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
+    /* ── WRAP ────────────────────────────────── */
+    .wrap {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+    }
+
     section { margin-bottom: 1.75rem; }
-    .s-label {
-      font-size: 0.57rem; letter-spacing: 0.3em;
-      text-transform: uppercase; color: var(--muted);
-      margin-bottom: 0.75rem; display: block;
-    }
-    .about-text { font-size: 0.88rem; line-height: 1.8; color: var(--sub); }
 
+    .s-label {
+      font-size: 0.57rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    /* ── ABOUT ───────────────────────────────── */
+    .about-text {
+      font-size: 0.88rem;
+      line-height: 1.8;
+      color: var(--sub);
+    }
+
+    /* ── STATUS ROW ──────────────────────────── */
     .section-head {
-      display: flex; align-items: center;
-      justify-content: space-between; margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
     }
     .section-head .s-label { margin: 0; }
 
     .live-tag {
-      display: inline-flex; align-items: center; gap: 0.35rem;
-      font-size: 0.57rem; letter-spacing: 0.13em;
-      text-transform: uppercase; color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.57rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
     }
     .live-dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: var(--muted); flex-shrink: 0; transition: background 0.3s;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--muted);
+      flex-shrink: 0;
+      transition: background 0.2s;
     }
     .live-dot.on  { background: #52a87a; }
     .live-dot.err { background: #a85252; }
-    .live-dot.spin { animation: pulse 1s ease-in-out infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
     .refresh-btn {
-      background: none; border: none; cursor: pointer;
-      font-size: 0.57rem; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--muted);
-      margin-left: 0.75rem; padding: 0; line-height: 1;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.57rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-left: 0.75rem;
+      padding: 0;
+      line-height: 1;
     }
     .refresh-btn:hover { color: var(--accent); }
-    .refresh-btn:disabled { opacity: 0.4; cursor: default; }
 
-    .rank-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    /* ── RANK ROW ────────────────────────────── */
+    .rank-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
     .rank-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 4px; padding: 1rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem;
     }
     .rank-card .rc-mode {
-      font-size: 0.57rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 0.35rem;
+      font-size: 0.57rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
     }
-    .rank-card .rc-rank { font-size: 1rem; font-weight: 600; color: var(--accent); }
-    .rank-card .rc-mmr  { font-size: 0.7rem; color: var(--sub); margin-top: 0.15rem; }
+    .rank-card .rc-rank {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .rank-card .rc-mmr {
+      font-size: 0.7rem;
+      color: var(--sub);
+      margin-top: 0.15rem;
+    }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.5rem; }
+    /* ── STATS ───────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+
     .stat-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 4px; padding: 0.9rem 0.5rem; text-align: center;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.9rem 0.5rem;
+      text-align: center;
     }
     .stat-card .sv {
-      font-size: 1.45rem; font-weight: 600;
-      font-variant-numeric: tabular-nums; color: var(--text); line-height: 1;
+      font-size: 1.45rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+      line-height: 1;
     }
     .stat-card .sl {
-      font-size: 0.56rem; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--muted); margin-top: 0.3rem;
+      font-size: 0.56rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.3rem;
     }
 
-    .info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    /* ── INFO ────────────────────────────────── */
+    .info-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
     .info-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 4px; padding: 0.75rem 1rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
     }
     .info-card .ik {
-      font-size: 0.56rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 0.2rem;
+      font-size: 0.56rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.2rem;
     }
-    .info-card .iv { font-size: 0.85rem; font-weight: 500; color: var(--text); }
+    .info-card .iv {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text);
+    }
 
+    /* ── TRACKER LINK ────────────────────────── */
     .divider { height: 1px; background: var(--border); margin-bottom: 1.5rem; }
+
     .tracker-link {
-      display: block; text-align: center; padding: 0.75rem;
-      border: 1px solid var(--border); border-radius: 4px;
-      background: var(--card); color: var(--accent);
-      text-decoration: none; font-size: 0.63rem;
-      letter-spacing: 0.2em; text-transform: uppercase;
+      display: block;
+      text-align: center;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--card);
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.63rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
       transition: border-color 0.15s;
     }
     .tracker-link:hover { border-color: var(--accent); }
 
+    /* ── FOOTER ──────────────────────────────── */
     footer {
-      text-align: center; padding: 1.25rem;
-      font-size: 0.55rem; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--muted);
-      border-top: 1px solid var(--border); background: var(--surface);
+      text-align: center;
+      padding: 1.25rem;
+      font-size: 0.55rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      background: var(--surface);
     }
 
-    /* setup-needed banner */
-    .setup-banner {
-      background: #2a2010; border: 1px solid #604020;
-      border-radius: 4px; padding: 0.75rem 1rem;
-      font-size: 0.72rem; color: #c09050; margin-bottom: 1.75rem;
-      line-height: 1.6; display: none;
-    }
-    .setup-banner.show { display: block; }
-    .setup-banner a { color: #d4a870; }
-
+    /* ── RESPONSIVE ──────────────────────────── */
     @media (max-width: 460px) {
-      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
       .info-row   { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) {
-      * { transition:none!important; animation:none!important; }
+      * { transition: none !important; }
     }
   </style>
 </head>
@@ -168,12 +270,7 @@
 
   <main class="wrap">
 
-    <!-- ⚙️ SETUP BANNER — hidden once WORKER_URL is set -->
-    <div class="setup-banner" id="setup-banner">
-      ⚙️ Worker URL not set — stats are showing cached values.<br>
-      Paste your Cloudflare Worker URL into <code>WORKER_URL</code> in the script below.
-    </div>
-
+    <!-- ABOUT -->
     <section>
       <span class="s-label">About</span>
       <p class="about-text">
@@ -182,6 +279,7 @@
       </p>
     </section>
 
+    <!-- RANKED -->
     <section>
       <div class="section-head">
         <span class="s-label">Ranked</span>
@@ -190,7 +288,7 @@
             <span class="live-dot" id="live-dot"></span>
             <span id="live-text">—</span>
           </span>
-          <button class="refresh-btn" id="refresh-btn" onclick="fetchStats()">↻ refresh</button>
+          <button class="refresh-btn" onclick="fetchStats()">↻ refresh</button>
         </span>
       </div>
       <div class="rank-row">
@@ -207,6 +305,7 @@
       </div>
     </section>
 
+    <!-- STATS -->
     <section>
       <span class="s-label">Lifetime</span>
       <div class="stats-grid">
@@ -219,6 +318,7 @@
       </div>
     </section>
 
+    <!-- SETUP -->
     <section>
       <span class="s-label">Setup</span>
       <div class="info-row">
@@ -230,6 +330,7 @@
     </section>
 
     <div class="divider"></div>
+
     <a class="tracker-link"
        href="https://rocketleague.tracker.network/rocket-league/profile/psn/Dustorb/overview"
        target="_blank" rel="noopener noreferrer">
@@ -241,45 +342,54 @@
   <footer>Dustorb · PSN · Rocket League</footer>
 
   <script>
-    /* ── PROTECTION ──────────────────────────── */
+    /* ── PROTECTION ─────────────────────────── */
+
+    // Block right-click
     document.addEventListener('contextmenu', e => e.preventDefault());
-    document.addEventListener('dragstart',   e => e.preventDefault());
-    document.addEventListener('selectstart', e => e.preventDefault());
+
+    // Block drag
+    document.addEventListener('dragstart', e => e.preventDefault());
+
+    // Block keyboard shortcuts
     document.addEventListener('keydown', e => {
       const k = e.key.toLowerCase();
-      /* F12 allowed during debugging */
+
+      // F12 - DevTools
+      if (e.key === 'F12') { e.preventDefault(); return; }
+
+      // Ctrl / Cmd combos
       if (e.ctrlKey || e.metaKey) {
+        // view-source, save, select-all, copy, cut, paste, print
         if (['u','s','a','c','x','p'].includes(k)) { e.preventDefault(); return; }
+        // DevTools panels (Shift+I / Shift+J / Shift+C)
         if (e.shiftKey && ['i','j','c'].includes(k)) { e.preventDefault(); return; }
       }
     });
-    (()=>{
-      console.log('%c⚠ Stop!','color:#c07070;font-size:2rem;font-weight:bold;');
-      console.log('%cThis page is protected.','color:#aaa;font-size:0.9rem;');
+
+    // Disable text selection via mouse
+    document.addEventListener('selectstart', e => e.preventDefault());
+
+    // Console warning
+    (function() {
+      const warn = '%c⚠ Stop!';
+      const msg  = '%cThis page is protected. Do not paste anything here.';
+      console.log(warn, 'color:#c07070;font-size:2rem;font-weight:bold;');
+      console.log(msg,  'color:#aaa;font-size:0.9rem;');
     })();
 
-    /* ─────────────────────────────────────────────────────────────
-       PASTE YOUR CLOUDFLARE WORKER URL HERE after deploying worker.js
-       Example: 'https://dustorb-stats.yourname.workers.dev'
-    ───────────────────────────────────────────────────────────── */
-    const WORKER_URL = 'https://dustorb-stats.astruznp19.workers.dev/';
-
-    /* ── FALLBACK (last known stats) ─────────── */
+    /* ── STATS FETCH ────────────────────────── */
     const FB = {
-      wins:272, goals:479, saves:360, assists:212, shots:1028, mvps:78,
-      r2:'Diamond I', m2:'861 MMR', r3:'Platinum I', m3:'663 MMR',
+      wins:283, goals:507, saves:390, assists:231, shots:1110, mvps:80,
+      r2:'Diamond I',  m2:'861 MMR',
+      r3:'Platinum I', m3:'663 MMR',
     };
 
-    /* ── UI helpers ──────────────────────────── */
-    function fmt(n) { return n != null ? Number(n).toLocaleString() : '—'; }
+    function fmt(n) { return Number(n).toLocaleString(); }
 
-    function setUI(state, label) {
+    function setLive(state, label) {
       const dot = document.getElementById('live-dot');
-      const btn = document.getElementById('refresh-btn');
       document.getElementById('live-text').textContent = label;
-      dot.className = 'live-dot ' +
-        (state==='loading' ? 'spin' : state==='ok' ? 'on' : state==='err' ? 'err' : '');
-      btn.disabled = (state === 'loading');
+      dot.className = 'live-dot ' + (state === 'ok' ? 'on' : state === 'err' ? 'err' : '');
     }
 
     function paint(d) {
@@ -295,121 +405,59 @@
       document.getElementById('mmr-3v3').textContent   = d.m3;
     }
 
-    /* ── Parse tracker.gg API JSON ───────────── */
     function parseAPI(json) {
-      const segs = json?.data?.segments;
-      if (!Array.isArray(segs)) return null;
-
-      const ov = segs.find(s => s.type === 'overview');
-      if (!ov) return null;
-      const st = ov.stats ?? {};
-
-      const get = (...keys) => { for (const k of keys) if (st[k]?.value != null) return st[k].value; return null; };
-      const wins    = get('wins','Wins');
-      const goals   = get('goals','Goals');
-      const saves   = get('saves','Saves');
-      const assists = get('assists','Assists');
-      const shots   = get('shots','Shots');
-      const mvps    = get('mVPs','MVPs','mvps');
-      if (wins == null) return null;
-
-      const dbl = segs.find(s => s.type==='playlist' && /doubles/i.test(s.metadata?.name));
-      const std = segs.find(s => s.type==='playlist' && /standard/i.test(s.metadata?.name) && !/doubles/i.test(s.metadata?.name));
-
+      const segs = json?.data?.segments ?? [];
+      const ov   = segs.find(s => s.type === 'overview');
+      const st   = ov?.stats ?? {};
+      function playlist(name) {
+        return segs.find(s => s.type === 'playlist' &&
+          (s.metadata?.name ?? '').toLowerCase().includes(name));
+      }
+      const dbl = playlist('doubles');
+      const std = playlist('standard');
       function tier(seg) {
-        if (!seg) return null;
-        const t = seg.stats?.tier?.metadata?.name ?? '';
-        const d = seg.stats?.division?.metadata?.name ?? '';
-        return t ? (d ? `${t} ${d.replace('Division ','Div ')}` : t) : null;
+        const t = seg?.stats?.tier?.metadata?.name ?? '';
+        const d = seg?.stats?.division?.metadata?.name ?? '';
+        return t ? (d ? t + ' ' + d.replace('Division ','Div ') : t) : null;
       }
       function mmr(seg) {
         const v = seg?.stats?.rating?.value;
-        return v != null ? `${Math.round(v)} MMR` : null;
+        return v != null ? Math.round(v) + ' MMR' : null;
       }
-
       return {
-        wins, goals, saves, assists, shots, mvps,
+        wins:    st.wins?.value    ?? FB.wins,
+        goals:   st.goals?.value   ?? FB.goals,
+        saves:   st.saves?.value   ?? FB.saves,
+        assists: st.assists?.value ?? FB.assists,
+        shots:   st.shots?.value   ?? FB.shots,
+        mvps:    st.mVPs?.value    ?? FB.mvps,
         r2: tier(dbl) ?? FB.r2, m2: mmr(dbl) ?? FB.m2,
         r3: tier(std) ?? FB.r3, m3: mmr(std) ?? FB.m3,
       };
     }
 
-    /* ── Main fetch ──────────────────────────── */
+    async function tryFetch(url, opts) {
+      const r = await fetch(url, { signal: AbortSignal.timeout(6000), ...opts });
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    }
+
     async function fetchStats() {
-      if (!WORKER_URL) {
-        document.getElementById('setup-banner').classList.add('show');
-        paint(FB); setUI('err', 'no worker url'); return;
-      }
+      setLive('', 'updating…');
+      const api   = 'https://api.tracker.gg/api/v2/rocket-league/standard/profile/psn/Dustorb';
+      const proxy = 'https://corsproxy.io/?' + encodeURIComponent(api);
 
-      setUI('loading', 'updating…');
-      let rawText = '';
       try {
-        const r = await fetch(WORKER_URL, { signal: AbortSignal.timeout(10000) });
-        rawText = await r.text();
+        const json = await tryFetch(api, { headers: { Accept: 'application/json' } });
+        paint(parseAPI(json)); setLive('ok', 'live · ' + new Date().toLocaleTimeString()); return;
+      } catch {}
 
-        /* show HTTP errors clearly */
-        if (!r.ok) {
-          paint(FB);
-          setUI('err', 'http ' + r.status);
-          showDebug('HTTP ' + r.status + '\n' + rawText.slice(0, 300));
-          return;
-        }
+      try {
+        const json = await tryFetch(proxy);
+        paint(parseAPI(json)); setLive('ok', 'live · ' + new Date().toLocaleTimeString()); return;
+      } catch {}
 
-        let json;
-        try { json = JSON.parse(rawText); }
-        catch(e) {
-          paint(FB);
-          setUI('err', 'bad json from worker');
-          showDebug('Not JSON:\n' + rawText.slice(0, 300));
-          return;
-        }
-
-        /* worker returned an error object */
-        if (json.error) {
-          paint(FB);
-          setUI('err', 'tracker: ' + String(json.error).slice(0, 30));
-          showDebug('Worker error:\n' + JSON.stringify(json, null, 2).slice(0, 400));
-          return;
-        }
-
-        const data = parseAPI(json);
-        if (!data) {
-          paint(FB);
-          setUI('err', 'parse failed — check debug');
-          showDebug('Parsed OK but no segments found.\nKeys: ' +
-            JSON.stringify(Object.keys(json)) + '\n\n' +
-            JSON.stringify(json).slice(0, 500));
-          return;
-        }
-
-        hideDebug();
-        paint(data);
-        setUI('ok', 'live · ' + new Date().toLocaleTimeString());
-
-      } catch (err) {
-        paint(FB);
-        const msg = err.name === 'TimeoutError' ? 'timeout' : (err.message || 'unknown');
-        setUI('err', msg.slice(0, 35));
-        showDebug('Fetch threw:\n' + err.name + ': ' + err.message);
-      }
-    }
-
-    function showDebug(text) {
-      let el = document.getElementById('debug-box');
-      if (!el) {
-        el = document.createElement('pre');
-        el.id = 'debug-box';
-        el.style.cssText = 'background:#1a0a0a;border:1px solid #602020;border-radius:4px;' +
-          'padding:0.75rem 1rem;font-size:0.7rem;color:#d08080;line-height:1.5;' +
-          'white-space:pre-wrap;word-break:break-all;margin-bottom:1.5rem;';
-        const wrap = document.querySelector('.wrap');
-        wrap.insertBefore(el, wrap.firstChild);
-      }
-      el.textContent = '⚠ Debug info (send this to Claude):\n\n' + text;
-    }
-    function hideDebug() {
-      const el = document.getElementById('debug-box');
-      if (el) el.remove();
+      paint(FB); setLive('err', 'cached');
     }
 
     fetchStats();

@@ -6,6 +6,7 @@
   <title>Dustorb — Rocket League</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    * { -webkit-user-select:none; -moz-user-select:none; user-select:none; }
 
     :root {
       --bg:      #1a1a1a;
@@ -18,14 +19,6 @@
       --accent:  #7a9cbf;
     }
 
-    /* no text selection anywhere */
-    * {
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-    }
-
     body {
       background: var(--bg);
       color: var(--text);
@@ -33,231 +26,128 @@
       min-height: 100vh;
     }
 
-    /* ── HERO ────────────────────────────────── */
+    /* ── HERO ─────────────────────────────── */
     .hero {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       padding: 3rem 1.5rem 2.5rem;
       text-align: center;
     }
-
     .psn-label {
-      font-size: 0.6rem;
-      letter-spacing: 0.32em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.75rem;
+      font-size: 0.6rem; letter-spacing: 0.32em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 0.75rem;
     }
-
     .player-name {
       font-size: clamp(2.6rem, 9vw, 4.8rem);
-      font-weight: 300;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--text);
-      line-height: 1;
+      font-weight: 300; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--text); line-height: 1;
     }
-
     .tagline {
-      margin-top: 0.85rem;
-      font-size: 0.68rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--muted);
+      margin-top: 0.85rem; font-size: 0.68rem;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
     }
 
-    /* ── WRAP ────────────────────────────────── */
-    .wrap {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem 3rem;
-    }
-
-    section { margin-bottom: 1.75rem; }
-
+    /* ── LAYOUT ───────────────────────────── */
+    .wrap { max-width: 640px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
+    section { margin-bottom: 2rem; }
     .s-label {
-      font-size: 0.57rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.75rem;
-      display: block;
+      font-size: 0.57rem; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 0.75rem; display: block;
     }
+    .about-text { font-size: 0.88rem; line-height: 1.8; color: var(--sub); }
 
-    /* ── ABOUT ───────────────────────────────── */
-    .about-text {
-      font-size: 0.88rem;
-      line-height: 1.8;
-      color: var(--sub);
-    }
-
-    /* ── STATUS ROW ──────────────────────────── */
+    /* ── SECTION HEAD ─────────────────────── */
     .section-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0.75rem;
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 0.75rem;
     }
     .section-head .s-label { margin: 0; }
-
     .live-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 0.57rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--muted);
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      font-size: 0.57rem; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--muted);
     }
     .live-dot {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--muted);
-      flex-shrink: 0;
-      transition: background 0.2s;
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--muted); flex-shrink: 0; transition: background 0.3s;
     }
-    .live-dot.on  { background: #52a87a; }
-    .live-dot.err { background: #a85252; }
-
+    .live-dot.on   { background: #52a87a; }
+    .live-dot.err  { background: #a85252; }
+    .live-dot.spin { animation: pulse 1s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
     .refresh-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 0.57rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-left: 0.75rem;
-      padding: 0;
-      line-height: 1;
+      background: none; border: none; cursor: pointer;
+      font-size: 0.57rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted);
+      margin-left: 0.75rem; padding: 0;
     }
     .refresh-btn:hover { color: var(--accent); }
+    .refresh-btn:disabled { opacity: .4; cursor: default; }
 
-    /* ── RANK ROW ────────────────────────────── */
-    .rank-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
-    }
-
+    /* ── RANK CARDS ───────────────────────── */
+    .rank-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.5rem; }
     .rank-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 4px; padding: 1.1rem 0.75rem; text-align: center;
     }
     .rank-card .rc-mode {
-      font-size: 0.57rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.35rem;
+      font-size: 0.57rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem;
     }
     .rank-card .rc-rank {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--accent);
+      font-size: 0.95rem; font-weight: 600; color: var(--accent);
+      line-height: 1.2;
     }
-    .rank-card .rc-mmr {
-      font-size: 0.7rem;
-      color: var(--sub);
-      margin-top: 0.15rem;
-    }
+    .rank-card .rc-div  { font-size: 0.65rem; color: var(--sub); margin-top: 0.2rem; }
+    .rank-card .rc-mmr  { font-size: 0.7rem; color: var(--muted); margin-top: 0.25rem; }
 
-    /* ── STATS ───────────────────────────────── */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.5rem;
+    /* ── DEBUG BOX ────────────────────────── */
+    .debug-box {
+      background: #1a0a0a; border: 1px solid #602020;
+      border-radius: 4px; padding: 0.75rem 1rem;
+      font-size: 0.68rem; color: #d08080; line-height: 1.5;
+      white-space: pre-wrap; word-break: break-all; margin-bottom: 1.5rem;
+      display: none;
     }
+    .debug-box.show { display: block; }
 
-    .stat-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 0.9rem 0.5rem;
-      text-align: center;
-    }
-    .stat-card .sv {
-      font-size: 1.45rem;
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-      color: var(--text);
-      line-height: 1;
-    }
-    .stat-card .sl {
-      font-size: 0.56rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-top: 0.3rem;
-    }
-
-    /* ── INFO ────────────────────────────────── */
-    .info-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
-    }
-
+    /* ── SETUP ────────────────────────────── */
+    .info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
     .info-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 0.75rem 1rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.75rem 1rem;
     }
     .info-card .ik {
-      font-size: 0.56rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.2rem;
+      font-size: 0.56rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 0.2rem;
     }
-    .info-card .iv {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--text);
-    }
+    .info-card .iv { font-size: 0.85rem; font-weight: 500; color: var(--text); }
 
-    /* ── TRACKER LINK ────────────────────────── */
+    /* ── TRACKER BUTTON ───────────────────── */
     .divider { height: 1px; background: var(--border); margin-bottom: 1.5rem; }
-
     .tracker-link {
-      display: block;
-      text-align: center;
-      padding: 0.75rem;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--card);
-      color: var(--accent);
-      text-decoration: none;
-      font-size: 0.63rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      transition: border-color 0.15s;
+      display: block; text-align: center; padding: 0.85rem;
+      border: 1px solid rgba(122,156,191,0.4); border-radius: 4px;
+      background: var(--card); color: var(--accent);
+      text-decoration: none; font-size: 0.65rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      transition: border-color 0.15s, background 0.15s;
     }
-    .tracker-link:hover { border-color: var(--accent); }
+    .tracker-link:hover { border-color: var(--accent); background: rgba(122,156,191,0.06); }
 
-    /* ── FOOTER ──────────────────────────────── */
     footer {
-      text-align: center;
-      padding: 1.25rem;
-      font-size: 0.55rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--muted);
-      border-top: 1px solid var(--border);
-      background: var(--surface);
+      text-align: center; padding: 1.25rem;
+      font-size: 0.55rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--muted);
+      border-top: 1px solid var(--border); background: var(--surface);
     }
 
-    /* ── RESPONSIVE ──────────────────────────── */
     @media (max-width: 460px) {
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .info-row   { grid-template-columns: 1fr; }
+      .rank-row  { grid-template-columns: 1fr; }
+      .info-row  { grid-template-columns: 1fr; }
     }
-    @media (prefers-reduced-motion: reduce) {
-      * { transition: none !important; }
-    }
+    @media (prefers-reduced-motion: reduce) { * { transition:none!important; animation:none!important; } }
   </style>
 </head>
 <body>
@@ -269,6 +159,9 @@
   </header>
 
   <main class="wrap">
+
+    <!-- debug box (hidden unless there's an error) -->
+    <div class="debug-box" id="debug-box"></div>
 
     <!-- ABOUT -->
     <section>
@@ -288,33 +181,28 @@
             <span class="live-dot" id="live-dot"></span>
             <span id="live-text">—</span>
           </span>
-          <button class="refresh-btn" onclick="fetchStats()">↻ refresh</button>
+          <button class="refresh-btn" id="refresh-btn" onclick="fetchRanks()">↻ refresh</button>
         </span>
       </div>
       <div class="rank-row">
         <div class="rank-card">
-          <div class="rc-mode">2v2 Doubles</div>
-          <div class="rc-rank" id="rank-2v2">Diamond I</div>
-          <div class="rc-mmr"  id="mmr-2v2">861 MMR</div>
+          <div class="rc-mode">1v1</div>
+          <div class="rc-rank" id="r1-rank">—</div>
+          <div class="rc-div"  id="r1-div"></div>
+          <div class="rc-mmr"  id="r1-mmr">—</div>
         </div>
         <div class="rank-card">
-          <div class="rc-mode">3v3 Standard</div>
-          <div class="rc-rank" id="rank-3v3">Platinum I</div>
-          <div class="rc-mmr"  id="mmr-3v3">663 MMR</div>
+          <div class="rc-mode">2v2</div>
+          <div class="rc-rank" id="r2-rank">Diamond I</div>
+          <div class="rc-div"  id="r2-div">Div II</div>
+          <div class="rc-mmr"  id="r2-mmr">861 MMR</div>
         </div>
-      </div>
-    </section>
-
-    <!-- STATS -->
-    <section>
-      <span class="s-label">Lifetime</span>
-      <div class="stats-grid">
-        <div class="stat-card"><div class="sv" id="s-wins">272</div>   <div class="sl">Wins</div></div>
-        <div class="stat-card"><div class="sv" id="s-goals">479</div>  <div class="sl">Goals</div></div>
-        <div class="stat-card"><div class="sv" id="s-saves">360</div>  <div class="sl">Saves</div></div>
-        <div class="stat-card"><div class="sv" id="s-assists">212</div><div class="sl">Assists</div></div>
-        <div class="stat-card"><div class="sv" id="s-shots">1,028</div><div class="sl">Shots</div></div>
-        <div class="stat-card"><div class="sv" id="s-mvps">78</div>    <div class="sl">MVPs</div></div>
+        <div class="rank-card">
+          <div class="rc-mode">3v3</div>
+          <div class="rc-rank" id="r3-rank">Platinum I</div>
+          <div class="rc-div"  id="r3-div">Div II</div>
+          <div class="rc-mmr"  id="r3-mmr">663 MMR</div>
+        </div>
       </div>
     </section>
 
@@ -322,10 +210,10 @@
     <section>
       <span class="s-label">Setup</span>
       <div class="info-row">
-        <div class="info-card"><div class="ik">Car</div>     <div class="iv">Fennec</div></div>
-        <div class="info-card"><div class="ik">Paint</div>   <div class="iv">Gray · Clean</div></div>
-        <div class="info-card"><div class="ik">Console</div> <div class="iv">PS4 Pro</div></div>
-        <div class="info-card"><div class="ik">Region</div>  <div class="iv">Europe · PSN</div></div>
+        <div class="info-card"><div class="ik">Car</div>    <div class="iv">Fennec</div></div>
+        <div class="info-card"><div class="ik">Paint</div>  <div class="iv">Gray · Clean</div></div>
+        <div class="info-card"><div class="ik">Console</div><div class="iv">PS4 Pro</div></div>
+        <div class="info-card"><div class="ik">Region</div> <div class="iv">Europe · PSN</div></div>
       </div>
     </section>
 
@@ -342,126 +230,85 @@
   <footer>Dustorb · PSN · Rocket League</footer>
 
   <script>
-    /* ── PROTECTION ─────────────────────────── */
-
-    // Block right-click
+    /* ── PROTECTION ────────────────────────── */
     document.addEventListener('contextmenu', e => e.preventDefault());
-
-    // Block drag
-    document.addEventListener('dragstart', e => e.preventDefault());
-
-    // Block keyboard shortcuts
+    document.addEventListener('dragstart',   e => e.preventDefault());
+    document.addEventListener('selectstart', e => e.preventDefault());
     document.addEventListener('keydown', e => {
       const k = e.key.toLowerCase();
-
-      // F12 - DevTools
       if (e.key === 'F12') { e.preventDefault(); return; }
-
-      // Ctrl / Cmd combos
       if (e.ctrlKey || e.metaKey) {
-        // view-source, save, select-all, copy, cut, paste, print
         if (['u','s','a','c','x','p'].includes(k)) { e.preventDefault(); return; }
-        // DevTools panels (Shift+I / Shift+J / Shift+C)
         if (e.shiftKey && ['i','j','c'].includes(k)) { e.preventDefault(); return; }
       }
     });
-
-    // Disable text selection via mouse
-    document.addEventListener('selectstart', e => e.preventDefault());
-
-    // Console warning
-    (function() {
-      const warn = '%c⚠ Stop!';
-      const msg  = '%cThis page is protected. Do not paste anything here.';
-      console.log(warn, 'color:#c07070;font-size:2rem;font-weight:bold;');
-      console.log(msg,  'color:#aaa;font-size:0.9rem;');
+    (()=>{
+      console.log('%c⚠ Stop!','color:#c07070;font-size:2rem;font-weight:bold;');
+      console.log('%cThis page is protected.','color:#aaa;font-size:0.9rem;');
     })();
 
-    /* ── STATS FETCH ────────────────────────── */
-    const FB = {
-      wins:283, goals:507, saves:390, assists:231, shots:1110, mvps:80,
-      r2:'Diamond I',  m2:'861 MMR',
-      r3:'Platinum I', m3:'663 MMR',
-    };
+    /* ── CONFIG ────────────────────────────── */
+    const WORKER_URL = 'https://dustorb-stats.astruznp19.workers.dev/';
 
-    function fmt(n) { return Number(n).toLocaleString(); }
-
-    function setLive(state, label) {
+    /* ── UI ────────────────────────────────── */
+    function setUI(state, label) {
       const dot = document.getElementById('live-dot');
+      const btn = document.getElementById('refresh-btn');
       document.getElementById('live-text').textContent = label;
-      dot.className = 'live-dot ' + (state === 'ok' ? 'on' : state === 'err' ? 'err' : '');
+      dot.className = 'live-dot ' +
+        (state==='loading'?'spin': state==='ok'?'on': state==='err'?'err':'');
+      btn.disabled = (state === 'loading');
     }
 
-    function paint(d) {
-      document.getElementById('s-wins').textContent    = fmt(d.wins);
-      document.getElementById('s-goals').textContent   = fmt(d.goals);
-      document.getElementById('s-saves').textContent   = fmt(d.saves);
-      document.getElementById('s-assists').textContent = fmt(d.assists);
-      document.getElementById('s-shots').textContent   = fmt(d.shots);
-      document.getElementById('s-mvps').textContent    = fmt(d.mvps);
-      document.getElementById('rank-2v2').textContent  = d.r2;
-      document.getElementById('mmr-2v2').textContent   = d.m2;
-      document.getElementById('rank-3v3').textContent  = d.r3;
-      document.getElementById('mmr-3v3').textContent   = d.m3;
+    function showDebug(text) {
+      const el = document.getElementById('debug-box');
+      el.textContent = '⚠ Debug (send to Claude):\n\n' + text;
+      el.classList.add('show');
+    }
+    function hideDebug() {
+      document.getElementById('debug-box').classList.remove('show');
     }
 
-    function parseAPI(json) {
-      const segs = json?.data?.segments ?? [];
-      const ov   = segs.find(s => s.type === 'overview');
-      const st   = ov?.stats ?? {};
-      function playlist(name) {
-        return segs.find(s => s.type === 'playlist' &&
-          (s.metadata?.name ?? '').toLowerCase().includes(name));
-      }
-      const dbl = playlist('doubles');
-      const std = playlist('standard');
-      function tier(seg) {
-        const t = seg?.stats?.tier?.metadata?.name ?? '';
-        const d = seg?.stats?.division?.metadata?.name ?? '';
-        return t ? (d ? t + ' ' + d.replace('Division ','Div ') : t) : null;
-      }
-      function mmr(seg) {
-        const v = seg?.stats?.rating?.value;
-        return v != null ? Math.round(v) + ' MMR' : null;
-      }
-      return {
-        wins:    st.wins?.value    ?? FB.wins,
-        goals:   st.goals?.value   ?? FB.goals,
-        saves:   st.saves?.value   ?? FB.saves,
-        assists: st.assists?.value ?? FB.assists,
-        shots:   st.shots?.value   ?? FB.shots,
-        mvps:    st.mVPs?.value    ?? FB.mvps,
-        r2: tier(dbl) ?? FB.r2, m2: mmr(dbl) ?? FB.m2,
-        r3: tier(std) ?? FB.r3, m3: mmr(std) ?? FB.m3,
-      };
+    function applyRanks(d) {
+      ['1','2','3'].forEach(n => {
+        const key = n === '1' ? 'v1' : n === '2' ? 'v2' : 'v3';
+        const p = d[key] ?? {};
+        document.getElementById(`r${n}-rank`).textContent = p.rank ?? '—';
+        document.getElementById(`r${n}-div`).textContent  = p.div  ?? '';
+        document.getElementById(`r${n}-mmr`).textContent  = p.mmr  ?? '—';
+      });
     }
 
-    async function tryFetch(url, opts) {
-      const r = await fetch(url, { signal: AbortSignal.timeout(6000), ...opts });
-      if (!r.ok) throw new Error(r.status);
-      return r.json();
-    }
-
-    async function fetchStats() {
-      setLive('', 'updating…');
-      const api   = 'https://api.tracker.gg/api/v2/rocket-league/standard/profile/psn/Dustorb';
-      const proxy = 'https://corsproxy.io/?' + encodeURIComponent(api);
-
+    /* ── FETCH ─────────────────────────────── */
+    async function fetchRanks() {
+      setUI('loading', 'updating…');
       try {
-        const json = await tryFetch(api, { headers: { Accept: 'application/json' } });
-        paint(parseAPI(json)); setLive('ok', 'live · ' + new Date().toLocaleTimeString()); return;
-      } catch {}
+        const r = await fetch(WORKER_URL, { signal: AbortSignal.timeout(12000) });
+        const json = await r.json();
 
-      try {
-        const json = await tryFetch(proxy);
-        paint(parseAPI(json)); setLive('ok', 'live · ' + new Date().toLocaleTimeString()); return;
-      } catch {}
+        if (json.error) {
+          showDebug('Worker error:\n' + JSON.stringify(json, null, 2));
+          setUI('err', 'error');
+          return;
+        }
 
-      paint(FB); setLive('err', 'cached');
+        // Show raw response in debug on first load so we can verify format
+        if (json._raw) {
+          console.log('Raw API response:', JSON.stringify(json._raw, null, 2));
+        }
+
+        applyRanks(json);
+        hideDebug();
+        setUI('ok', 'live · ' + new Date().toLocaleTimeString());
+
+      } catch (err) {
+        showDebug('Fetch error:\n' + err.message);
+        setUI('err', err.name === 'TimeoutError' ? 'timeout' : 'error');
+      }
     }
 
-    fetchStats();
-    setInterval(fetchStats, 5 * 60 * 1000);
+    fetchRanks();
+    setInterval(fetchRanks, 5 * 60 * 1000);
   </script>
 
 </body>

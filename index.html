@@ -53,7 +53,6 @@
       text-transform: uppercase; color: var(--muted);
       margin-bottom: 0.75rem; display: block;
     }
-
     .about-text { font-size: 0.88rem; line-height: 1.8; color: var(--sub); }
 
     .section-head {
@@ -105,7 +104,6 @@
     .stat-card .sv {
       font-size: 1.45rem; font-weight: 600;
       font-variant-numeric: tabular-nums; color: var(--text); line-height: 1;
-      transition: opacity 0.2s;
     }
     .stat-card .sl {
       font-size: 0.56rem; letter-spacing: 0.18em;
@@ -141,11 +139,23 @@
       border-top: 1px solid var(--border); background: var(--surface);
     }
 
+    /* setup-needed banner */
+    .setup-banner {
+      background: #2a2010; border: 1px solid #604020;
+      border-radius: 4px; padding: 0.75rem 1rem;
+      font-size: 0.72rem; color: #c09050; margin-bottom: 1.75rem;
+      line-height: 1.6; display: none;
+    }
+    .setup-banner.show { display: block; }
+    .setup-banner a { color: #d4a870; }
+
     @media (max-width: 460px) {
       .stats-grid { grid-template-columns: repeat(2,1fr); }
       .info-row   { grid-template-columns: 1fr; }
     }
-    @media (prefers-reduced-motion: reduce) { * { transition:none!important; animation:none!important; } }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition:none!important; animation:none!important; }
+    }
   </style>
 </head>
 <body>
@@ -157,6 +167,12 @@
   </header>
 
   <main class="wrap">
+
+    <!-- ⚙️ SETUP BANNER — hidden once WORKER_URL is set -->
+    <div class="setup-banner" id="setup-banner">
+      ⚙️ Worker URL not set — stats are showing cached values.<br>
+      Paste your Cloudflare Worker URL into <code>WORKER_URL</code> in the script below.
+    </div>
 
     <section>
       <span class="s-label">About</span>
@@ -242,26 +258,19 @@
       console.log('%cThis page is protected.','color:#aaa;font-size:0.9rem;');
     })();
 
-    /* ── DATA ────────────────────────────────── */
+    /* ─────────────────────────────────────────────────────────────
+       PASTE YOUR CLOUDFLARE WORKER URL HERE after deploying worker.js
+       Example: 'https://dustorb-stats.yourname.workers.dev'
+    ───────────────────────────────────────────────────────────── */
+    const WORKER_URL = 'https://dustorb-stats.astruznp19.workers.dev/';
+
+    /* ── FALLBACK (last known stats) ─────────── */
     const FB = {
       wins:272, goals:479, saves:360, assists:212, shots:1028, mvps:78,
       r2:'Diamond I', m2:'861 MMR', r3:'Platinum I', m3:'663 MMR',
     };
 
-    /* All targets to attempt, in order */
-    const PSN  = 'Dustorb';
-    const URLS = {
-      api:  `https://api.tracker.gg/api/v2/rocket-league/standard/profile/psn/${PSN}`,
-      page: `https://rocketleague.tracker.network/rocket-league/profile/psn/${PSN}/overview`,
-    };
-
-    /* CORS proxy wrappers */
-    const WRAP = [
-      u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
-      u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
-      u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
-    ];
-
+    /* ── UI helpers ──────────────────────────── */
     function fmt(n) { return n != null ? Number(n).toLocaleString() : '—'; }
 
     function setUI(state, label) {
@@ -286,51 +295,26 @@
       document.getElementById('mmr-3v3').textContent   = d.m3;
     }
 
-    /* Parse tracker.gg API JSON response */
-    function parseAPIJson(json) {
+    /* ── Parse tracker.gg API JSON ───────────── */
+    function parseAPI(json) {
       const segs = json?.data?.segments;
       if (!Array.isArray(segs)) return null;
-      return extractFromSegments(segs);
-    }
 
-    /* Parse tracker.network HTML — extracts __NEXT_DATA__ embedded JSON */
-    function parsePageHTML(html) {
-      const m = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/);
-      if (!m) return null;
-      try {
-        const nd = JSON.parse(m[1]);
-        const pp = nd?.props?.pageProps;
-        const segs = pp?.data?.segments
-                  ?? pp?.profile?.segments
-                  ?? pp?.segments;
-        return segs ? extractFromSegments(segs) : null;
-      } catch { return null; }
-    }
-
-    function extractFromSegments(segs) {
       const ov = segs.find(s => s.type === 'overview');
       if (!ov) return null;
       const st = ov.stats ?? {};
 
-      /* key names vary between API versions */
-      const get = (a,b) => st[a]?.value ?? st[b]?.value;
-      const wins    = get('wins',    'Wins');
-      const goals   = get('goals',   'Goals');
-      const saves   = get('saves',   'Saves');
-      const assists = get('assists', 'Assists');
-      const shots   = get('shots',   'Shots');
-      const mvps    = get('mVPs','MVPs') ?? get('mvps','Mvps');
-
+      const get = (...keys) => { for (const k of keys) if (st[k]?.value != null) return st[k].value; return null; };
+      const wins    = get('wins','Wins');
+      const goals   = get('goals','Goals');
+      const saves   = get('saves','Saves');
+      const assists = get('assists','Assists');
+      const shots   = get('shots','Shots');
+      const mvps    = get('mVPs','MVPs','mvps');
       if (wins == null) return null;
 
-      function playlist(name) {
-        return segs.find(s => s.type === 'playlist' &&
-          (s.metadata?.name ?? '').toLowerCase().includes(name));
-      }
-      const dbl = playlist('doubles');
-      const std = segs.find(s => s.type === 'playlist' &&
-        /standard/i.test(s.metadata?.name) &&
-        !/doubles/i.test(s.metadata?.name));
+      const dbl = segs.find(s => s.type==='playlist' && /doubles/i.test(s.metadata?.name));
+      const std = segs.find(s => s.type==='playlist' && /standard/i.test(s.metadata?.name) && !/doubles/i.test(s.metadata?.name));
 
       function tier(seg) {
         if (!seg) return null;
@@ -350,47 +334,31 @@
       };
     }
 
-    async function tryGet(url, asText = false, timeout = 8000) {
-      const r = await fetch(url, { signal: AbortSignal.timeout(timeout) });
-      if (!r.ok) throw new Error(r.status);
-      return asText ? r.text() : r.json();
-    }
-
+    /* ── Main fetch ──────────────────────────── */
     async function fetchStats() {
+      /* Show setup banner if worker URL not configured */
+      if (!WORKER_URL) {
+        document.getElementById('setup-banner').classList.add('show');
+        paint(FB);
+        setUI('err', 'cached');
+        return;
+      }
+
       setUI('loading', 'updating…');
-
-      /* ── Strategy 1: JSON API through each proxy ── */
-      for (const wrap of WRAP) {
-        try {
-          const json = await tryGet(wrap(URLS.api));
-          const data = parseAPIJson(json);
-          if (data) {
-            paint(data);
-            setUI('ok', 'live · ' + new Date().toLocaleTimeString());
-            return;
-          }
-        } catch { /* try next */ }
+      try {
+        const r = await fetch(WORKER_URL, { signal: AbortSignal.timeout(8000) });
+        if (!r.ok) throw new Error(r.status);
+        const json = await r.json();
+        const data = parseAPI(json);
+        if (!data) throw new Error('parse failed');
+        paint(data);
+        setUI('ok', 'live · ' + new Date().toLocaleTimeString());
+      } catch (err) {
+        paint(FB);
+        setUI('err', 'error · cached');
       }
-
-      /* ── Strategy 2: Scrape HTML page, extract __NEXT_DATA__ ── */
-      for (const wrap of WRAP) {
-        try {
-          const html = await tryGet(wrap(URLS.page), true);
-          const data = parsePageHTML(html);
-          if (data) {
-            paint(data);
-            setUI('ok', 'live · ' + new Date().toLocaleTimeString());
-            return;
-          }
-        } catch { /* try next */ }
-      }
-
-      /* ── All strategies failed — show cached values ── */
-      paint(FB);
-      setUI('err', 'cached · tracker blocked');
     }
 
-    /* Run on load + auto-refresh every 5 min */
     fetchStats();
     setInterval(fetchStats, 5 * 60 * 1000);
   </script>

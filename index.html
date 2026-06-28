@@ -95,22 +95,24 @@
       font-size: 0.57rem; letter-spacing: 0.2em;
       text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem;
     }
-    .rank-card .rc-rank {
-      font-size: 0.95rem; font-weight: 600; color: var(--accent);
-      line-height: 1.2;
-    }
+    .rank-card .rc-rank { font-size: 0.95rem; font-weight: 600; color: var(--accent); line-height: 1.2; }
     .rank-card .rc-div  { font-size: 0.65rem; color: var(--sub); margin-top: 0.2rem; }
     .rank-card .rc-mmr  { font-size: 0.7rem; color: var(--muted); margin-top: 0.25rem; }
 
-    /* ── DEBUG BOX ────────────────────────── */
-    .debug-box {
-      background: #1a0a0a; border: 1px solid #602020;
-      border-radius: 4px; padding: 0.75rem 1rem;
-      font-size: 0.68rem; color: #d08080; line-height: 1.5;
-      white-space: pre-wrap; word-break: break-all; margin-bottom: 1.5rem;
-      display: none;
+    /* ── STATS GRID ───────────────────────── */
+    .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.5rem; }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.9rem 0.5rem; text-align: center;
     }
-    .debug-box.show { display: block; }
+    .stat-card .sv {
+      font-size: 1.45rem; font-weight: 600;
+      font-variant-numeric: tabular-nums; color: var(--text); line-height: 1;
+    }
+    .stat-card .sl {
+      font-size: 0.56rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--muted); margin-top: 0.3rem;
+    }
 
     /* ── SETUP ────────────────────────────── */
     .info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
@@ -124,14 +126,22 @@
     }
     .info-card .iv { font-size: 0.85rem; font-weight: 500; color: var(--text); }
 
+    /* ── DEBUG BOX ────────────────────────── */
+    .debug-box {
+      background: #1a0a0a; border: 1px solid #602020; border-radius: 4px;
+      padding: 0.75rem 1rem; font-size: 0.68rem; color: #d08080;
+      line-height: 1.5; white-space: pre-wrap; word-break: break-all;
+      margin-bottom: 1.5rem; display: none;
+    }
+    .debug-box.show { display: block; }
+
     /* ── TRACKER BUTTON ───────────────────── */
     .divider { height: 1px; background: var(--border); margin-bottom: 1.5rem; }
     .tracker-link {
       display: block; text-align: center; padding: 0.85rem;
       border: 1px solid rgba(122,156,191,0.4); border-radius: 4px;
-      background: var(--card); color: var(--accent);
-      text-decoration: none; font-size: 0.65rem;
-      letter-spacing: 0.2em; text-transform: uppercase;
+      background: var(--card); color: var(--accent); text-decoration: none;
+      font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
       transition: border-color 0.15s, background 0.15s;
     }
     .tracker-link:hover { border-color: var(--accent); background: rgba(122,156,191,0.06); }
@@ -144,8 +154,9 @@
     }
 
     @media (max-width: 460px) {
-      .rank-row  { grid-template-columns: 1fr; }
-      .info-row  { grid-template-columns: 1fr; }
+      .rank-row   { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .info-row   { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) { * { transition:none!important; animation:none!important; } }
   </style>
@@ -160,7 +171,6 @@
 
   <main class="wrap">
 
-    <!-- debug box (hidden unless there's an error) -->
     <div class="debug-box" id="debug-box"></div>
 
     <!-- ABOUT -->
@@ -181,7 +191,7 @@
             <span class="live-dot" id="live-dot"></span>
             <span id="live-text">—</span>
           </span>
-          <button class="refresh-btn" id="refresh-btn" onclick="fetchRanks()">↻ refresh</button>
+          <button class="refresh-btn" id="refresh-btn" onclick="fetchStats()">↻ refresh</button>
         </span>
       </div>
       <div class="rank-row">
@@ -193,16 +203,29 @@
         </div>
         <div class="rank-card">
           <div class="rc-mode">2v2</div>
-          <div class="rc-rank" id="r2-rank">Diamond I</div>
-          <div class="rc-div"  id="r2-div">Div II</div>
-          <div class="rc-mmr"  id="r2-mmr">861 MMR</div>
+          <div class="rc-rank" id="r2-rank">—</div>
+          <div class="rc-div"  id="r2-div"></div>
+          <div class="rc-mmr"  id="r2-mmr">—</div>
         </div>
         <div class="rank-card">
           <div class="rc-mode">3v3</div>
-          <div class="rc-rank" id="r3-rank">Platinum I</div>
-          <div class="rc-div"  id="r3-div">Div II</div>
-          <div class="rc-mmr"  id="r3-mmr">663 MMR</div>
+          <div class="rc-rank" id="r3-rank">—</div>
+          <div class="rc-div"  id="r3-div"></div>
+          <div class="rc-mmr"  id="r3-mmr">—</div>
         </div>
+      </div>
+    </section>
+
+    <!-- LIFETIME STATS -->
+    <section>
+      <span class="s-label">Lifetime</span>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="sv" id="s-wins">—</div>   <div class="sl">Wins</div></div>
+        <div class="stat-card"><div class="sv" id="s-goals">—</div>  <div class="sl">Goals</div></div>
+        <div class="stat-card"><div class="sv" id="s-saves">—</div>  <div class="sl">Saves</div></div>
+        <div class="stat-card"><div class="sv" id="s-assists">—</div><div class="sl">Assists</div></div>
+        <div class="stat-card"><div class="sv" id="s-shots">—</div>  <div class="sl">Shots</div></div>
+        <div class="stat-card"><div class="sv" id="s-mvps">—</div>   <div class="sl">MVPs</div></div>
       </div>
     </section>
 
@@ -218,7 +241,6 @@
     </section>
 
     <div class="divider"></div>
-
     <a class="tracker-link"
        href="https://rocketleague.tracker.network/rocket-league/profile/psn/Dustorb/overview"
        target="_blank" rel="noopener noreferrer">
@@ -244,100 +266,111 @@
     });
     (()=>{
       console.log('%c⚠ Stop!','color:#c07070;font-size:2rem;font-weight:bold;');
-      console.log('%cThis page is protected.','color:#aaa;font-size:0.9rem;');
+      console.log('%cThis page is protected.','color:#aaa;');
     })();
 
     /* ── CONFIG ────────────────────────────── */
-    // Direct RapidAPI call — no middleman needed
-    const RAPID_KEY = 'f799324f71mshaeee995f29881c8p192631jsna78f07c1adf0';
-    const EPIC_ID   = '4aed4968c1c24c4183a389a4fbe9ed1d';
-    const API_URL   = 'https://rocket-league1.p.rapidapi.com/ranks/' + EPIC_ID;
-    const DIV       = {1:'I', 2:'II', 3:'III', 4:'IV'};
+    const RAPID_KEY    = 'f799324f71mshaeee995f29881c8p192631jsna78f07c1adf0';
+    const EPIC_NAME    = 'yEW6nQZHSp';   // Epic display name linked to PSN Dustorb
+    const API_URL      = 'https://rocket-league10.p.rapidapi.com/stats/epic/' + EPIC_NAME;
+    const RAPID_HOST   = 'rocket-league10.p.rapidapi.com';
+    const DIV_MAP      = {0:'I', 1:'II', 2:'III', 3:'IV'};
 
-    /* ── UI ────────────────────────────────── */
+    /* ── UI helpers ─────────────────────────── */
     function setUI(state, label) {
       const dot = document.getElementById('live-dot');
       const btn = document.getElementById('refresh-btn');
       document.getElementById('live-text').textContent = label;
-      dot.className = 'live-dot ' +
-        (state==='loading'?'spin': state==='ok'?'on': state==='err'?'err':'');
+      dot.className = 'live-dot ' + (state==='loading'?'spin':state==='ok'?'on':state==='err'?'err':'');
       btn.disabled = (state === 'loading');
     }
-
-    function showDebug(text) {
+    function showDebug(txt) {
       const el = document.getElementById('debug-box');
-      el.textContent = '⚠ Debug (send to Claude):\n\n' + text;
+      el.textContent = '⚠ Debug (send to Claude):\n\n' + txt;
       el.classList.add('show');
     }
-    function hideDebug() {
-      document.getElementById('debug-box').classList.remove('show');
+    function hideDebug() { document.getElementById('debug-box').classList.remove('show'); }
+    function fmt(n) { return n != null ? Number(n).toLocaleString() : '—'; }
+
+    /* ── Paint stats ────────────────────────── */
+    function paintLifetime(lt) {
+      document.getElementById('s-wins').textContent    = fmt(lt.wins);
+      document.getElementById('s-goals').textContent   = fmt(lt.goals);
+      document.getElementById('s-saves').textContent   = fmt(lt.saves);
+      document.getElementById('s-assists').textContent = fmt(lt.assists);
+      document.getElementById('s-shots').textContent   = fmt(lt.shots);
+      document.getElementById('s-mvps').textContent    = fmt(lt.mvps);
     }
 
-    function applyRanks(list) {
-      function find(...terms) {
-        return list.find(p => terms.some(t => (p.playlist ?? '').toLowerCase().includes(t))) ?? null;
-      }
-      const v1 = find('duel');
-      const v2 = find('doubles');
-      const v3 = find('standard');
+    function paintRanks(playlists) {
+      if (!Array.isArray(playlists)) return;
+      const find = (...terms) =>
+        playlists.find(p => terms.some(t => (p.playlistName ?? p.name ?? '').toLowerCase().includes(t)));
+      const v1 = find('duel','1v1');
+      const v2 = find('doubles','2v2');
+      const v3 = find('standard','3v3');
 
-      function paint(n, p) {
-        document.getElementById('r'+n+'-rank').textContent = p ? (p.rank ?? '—') : '—';
-        document.getElementById('r'+n+'-div').textContent  = p && p.division ? 'Div '+(DIV[p.division]??p.division) : '';
-        document.getElementById('r'+n+'-mmr').textContent  = p && p.mmr ? Math.round(p.mmr)+' MMR' : '—';
+      function apply(n, p) {
+        if (!p) return;
+        const tier = p.tierName ?? p.rank ?? '—';
+        const div  = p.division != null
+          ? 'Div ' + (DIV_MAP[p.division] ?? DIV_MAP[p.division - 1] ?? p.division)
+          : '';
+        const mmr  = p.mmr ?? p.rating;
+        document.getElementById('r'+n+'-rank').textContent = tier;
+        document.getElementById('r'+n+'-div').textContent  = div;
+        document.getElementById('r'+n+'-mmr').textContent  = mmr != null ? Math.round(mmr)+' MMR' : '—';
       }
-      paint('1', v1); paint('2', v2); paint('3', v3);
+      apply('1', v1); apply('2', v2); apply('3', v3);
     }
 
-    /* ── FETCH — direct browser call to RapidAPI ── */
-    async function fetchRanks() {
+    /* ── Fetch ──────────────────────────────── */
+    async function fetchStats() {
       setUI('loading', 'updating…');
       try {
         const r = await fetch(API_URL, {
           signal: AbortSignal.timeout(12000),
           headers: {
             'x-rapidapi-key':  RAPID_KEY,
-            'x-rapidapi-host': 'rocket-league1.p.rapidapi.com',
+            'x-rapidapi-host': RAPID_HOST,
+            'Content-Type':    'application/json',
           },
         });
 
         const text = await r.text();
         if (!r.ok) {
           showDebug('API error ' + r.status + ':\n' + text.slice(0, 400));
-          setUI('err', 'error ' + r.status);
-          return;
+          setUI('err', 'error ' + r.status); return;
         }
 
         let data;
         try { data = JSON.parse(text); }
         catch(e) { showDebug('Bad JSON:\n' + text.slice(0, 400)); setUI('err','bad json'); return; }
 
-        const list = data?.ranks;
-        if (!Array.isArray(list)) {
-          showDebug('Unexpected shape:\n' + JSON.stringify(data, null, 2).slice(0, 500));
-          setUI('err', 'parse error');
-          return;
+        // Paint lifetime stats
+        if (data.lifetime) paintLifetime(data.lifetime);
+
+        // Paint ranks — could be data.ranked, data.playlists, data.ranks, etc.
+        const rankList = data.ranked ?? data.playlists ?? data.ranks
+          ?? (Array.isArray(data) ? data : null);
+        if (rankList) {
+          paintRanks(rankList);
+        } else {
+          // Log the keys so we can find where ranks are
+          console.log('API response keys:', Object.keys(data));
         }
 
-        applyRanks(list);
         hideDebug();
         setUI('ok', 'live · ' + new Date().toLocaleTimeString());
 
       } catch (err) {
-        const isCors = err.message.toLowerCase().includes('cors') ||
-                       err.message.toLowerCase().includes('fetch') ||
-                       err.name === 'TypeError';
-        if (isCors) {
-          showDebug('CORS blocked — RapidAPI does not allow browser calls.\nNeed to keep using the Worker.\nSend this to Claude.');
-        } else {
-          showDebug('Fetch error:\n' + err.name + ': ' + err.message);
-        }
-        setUI('err', 'error');
+        showDebug('Fetch error:\n' + err.name + ': ' + err.message);
+        setUI('err', err.name === 'TimeoutError' ? 'timeout' : 'error');
       }
     }
 
-    fetchRanks();
-    setInterval(fetchRanks, 5 * 60 * 1000);
+    fetchStats();
+    setInterval(fetchStats, 5 * 60 * 1000);
   </script>
 
 </body>

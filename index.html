@@ -342,6 +342,7 @@
 
     function paintRanks(playlists) {
       if (!Array.isArray(playlists)) return;
+      console.log('RAW RANK DATA — copy this and send to Claude:\n' + JSON.stringify(playlists, null, 2));
       const find = (...terms) =>
         playlists.find(p => terms.some(t => (p.playlistName ?? p.name ?? '').toLowerCase().includes(t)));
       const v1 = find('duel','1v1');

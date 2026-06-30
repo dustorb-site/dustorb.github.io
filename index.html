@@ -288,26 +288,30 @@
     const DIV_MAP      = {0:'I', 1:'II', 2:'III', 3:'IV'};
 
     /* ── RANK ICON MAP ──────────────────────── */
-    // Keys must match the base tier name (no division suffix) in lowercase.
+    // Substring match against the lowercased tier name — works regardless of
+    // whether the API formats divisions as roman numerals ("Diamond III"),
+    // digits ("Diamond 3"), or appends extra text ("Gold II Division 3").
+    // Order matters: more specific names (e.g. "grand champion") must come
+    // before substrings they contain (e.g. "champion").
     // All images go in a /ranks/ folder next to index.html.
-    const TIER_ICON = {
-      'unranked':          'ranks/unranked.png',
-      'bronze':            'ranks/bronze.png',
-      'silver':            'ranks/silver.png',
-      'gold':              'ranks/gold.png',
-      'platinum':          'ranks/platinum.png',
-      'diamond':           'ranks/diamond.png',
-      'champion':          'ranks/champion.png',
-      'grand champion':    'ranks/grand-champion.png',
-      'supersonic legend': 'ranks/ssl.png',
-      'ssl':               'ranks/ssl.png',
-    };
+    const TIER_ORDER = [
+      ['supersonic legend', 'ranks/ssl.png'],
+      ['grand champion',    'ranks/grand-champion.png'],
+      ['champion',          'ranks/champion.png'],
+      ['diamond',           'ranks/diamond.png'],
+      ['platinum',          'ranks/platinum.png'],
+      ['gold',              'ranks/gold.png'],
+      ['silver',            'ranks/silver.png'],
+      ['bronze',            'ranks/bronze.png'],
+      ['unranked',          'ranks/unranked.png'],
+      ['ssl',               'ranks/ssl.png'],
+    ];
 
-    // Strip trailing Roman-numeral division (I, II, III, IV) from tier name
     function tierIcon(tierName) {
       if (!tierName || tierName === '—') return null;
-      const base = tierName.toLowerCase().replace(/\s+(iv|i{1,3})$/, '').trim();
-      return TIER_ICON[base] ?? null;
+      const t = String(tierName).toLowerCase();
+      const hit = TIER_ORDER.find(([key]) => t.includes(key));
+      return hit ? hit[1] : null;
     }
 
     /* ── UI helpers ─────────────────────────── */
@@ -320,7 +324,7 @@
     }
     function showDebug(txt) {
       const el = document.getElementById('debug-box');
-      el.textContent = '⚠ Debug ():\n\n' + txt;
+      el.textContent = '⚠ Debug (send to Claude):\n\n' + txt;
       el.classList.add('show');
     }
     function hideDebug() { document.getElementById('debug-box').classList.remove('show'); }
@@ -361,10 +365,15 @@
         if (img) {
           const src = tierIcon(tier);
           if (src) {
+            img.onerror = () => {
+              console.warn('Rank icon file missing or misnamed:', src, '(tier text was "'+tier+'")');
+              img.style.display = 'none';
+            };
+            img.onload = () => { img.style.display = 'block'; };
             img.src = src;
             img.alt = tier;
-            img.style.display = 'block';
           } else {
+            console.warn('No icon match for tier text:', JSON.stringify(tier));
             img.style.display = 'none';
           }
         }
@@ -415,7 +424,7 @@
     }
 
     fetchStats();
-    setInterval(fetchStats, 2 * 60 * 60 * 1000);
+    setInterval(fetchStats, 5 * 60 * 1000);
   </script>
 
 </body>

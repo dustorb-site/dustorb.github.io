@@ -342,7 +342,6 @@
 
     function paintRanks(playlists) {
       if (!Array.isArray(playlists)) return;
-      console.log('RAW RANK DATA — copy this and send to Claude:\n' + JSON.stringify(playlists, null, 2));
       const find = (...terms) =>
         playlists.find(p => terms.some(t => (p.playlistName ?? p.name ?? '').toLowerCase().includes(t)));
       const v1 = find('duel','1v1');
@@ -392,7 +391,35 @@
     // Page loads/reloads no longer cost an API call by themselves — only the
     // first load after the cache expires (or a manual refresh) hits RapidAPI.
     const CACHE_KEY     = 'dustorb_rl_cache_v1';
-    const CACHE_TTL_MS  = 2 * 60 * 60 * 1000; // 2 hours — change this one number to adjust cadence
+    const CACHE_TTL_MS  = 6 * 60 * 60 * 1000; // 6 hours — change this one number to adjust cadence
+
+    /* ── HARD DAILY CAP ───────────────────────
+       Independent backstop on top of the TTL above. Caps the TOTAL number of
+       real network calls THIS BROWSER will make in a UTC day, no matter how
+       many times the page reloads or the refresh button gets clicked.
+       Resets at 00:00 UTC — same reset point RapidAPI uses.
+       Note: this counter is per-browser storage, not global — a different
+       browser, device, or incognito window keeps its own separate counter. */
+    const DAILY_KEY        = 'dustorb_rl_daily_v1';
+    const MAX_DAILY_CALLS  = 4;               // hard ceiling, well under any realistic free-tier quota
+    const MIN_GAP_MS       = 10 * 60 * 1000;  // min spacing between any two real attempts — blocks refresh-spam
+
+    function utcDateKey() {
+      const d = new Date();
+      return d.getUTCFullYear() + '-' + String(d.getUTCMonth()+1).padStart(2,'0') + '-' + String(d.getUTCDate()).padStart(2,'0');
+    }
+    function readDaily() {
+      try {
+        const raw = localStorage.getItem(DAILY_KEY);
+        const parsed = raw ? JSON.parse(raw) : null;
+        if (!parsed || parsed.date !== utcDateKey()) return { date: utcDateKey(), count: 0, lastAttempt: 0 };
+        return parsed;
+      } catch (e) { return { date: utcDateKey(), count: 0, lastAttempt: 0 }; }
+    }
+    function writeDaily(state) {
+      try { localStorage.setItem(DAILY_KEY, JSON.stringify(state)); }
+      catch (e) { /* storage unavailable — fail silently */ }
+    }
 
     function readCache() {
       try {
@@ -430,6 +457,31 @@
         setUI('ok', 'cached · ' + new Date(cached.timestamp).toLocaleTimeString());
         return;
       }
+
+      // Hard ceiling check — this runs even for a forced manual refresh, so
+      // no sequence of reloads or button-clicks can ever exceed the cap.
+      const daily = readDaily();
+      const sinceLastAttempt = Date.now() - (daily.lastAttempt || 0);
+
+      if (daily.count >= MAX_DAILY_CALLS || sinceLastAttempt < MIN_GAP_MS) {
+        if (cached) {
+          paintFromData(cached.data);
+          hideDebug();
+          const why = daily.count >= MAX_DAILY_CALLS ? 'daily cap reached' : 'one moment';
+          setUI('ok', 'cached · ' + new Date(cached.timestamp).toLocaleTimeString() + ' (' + why + ')');
+        } else {
+          // Only realistic path here: brand-new browser (no cache yet) that
+          // somehow already burned its cap today — effectively never happens
+          // in practice, but fails safely instead of spamming the API.
+          setUI('err', daily.count >= MAX_DAILY_CALLS ? 'daily cap reached' : 'one moment');
+        }
+        return;
+      }
+
+      // Record the attempt BEFORE calling — so even a failed/errored call
+      // still counts against the cap. This is what makes the ceiling hold
+      // no matter what RapidAPI does on its end.
+      writeDaily({ date: daily.date, count: daily.count + 1, lastAttempt: Date.now() });
 
       setUI('loading', 'updating…');
       try {
@@ -479,7 +531,8 @@
     }
 
     fetchStats();
-    // Re-checks every 15 min, but actually calls the API only once the 2h cache expires
+    // Re-checks every 15 min; actually touches the API only when the cache
+    // above has expired — and even then, only if the daily cap allows it.
     setInterval(() => fetchStats(false), 15 * 60 * 1000);
   </script>
 
